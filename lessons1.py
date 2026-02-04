@@ -43,3 +43,19 @@ days = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 max_day = max(subs)  # Самое максимальное значение из всех
 
 # Код тут.
+
+import math
+
+subs = [30, 15, 1, 25, 5, 28]
+days = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+
+max_day = max(subs)  # Самое максимальное значение из всех
+
+
+# Код тут.
+
+for i in range(len(days)):
+    procent_bar = math.ceil(max_day * (subs[i]/max_day)) # значение шкалы
+    empty_char = math.ceil(max_day) - procent_bar # разница между максимальным процентом и долей значения в данной итерации
+    print(f'{days[i]}: {procent_bar * "#"}{empty_char * "_"} ({str(subs[i]).rjust(2)})')
+
