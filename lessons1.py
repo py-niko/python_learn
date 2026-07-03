@@ -59,3 +59,47 @@ for i in range(len(days)):
     empty_char = math.ceil(max_day) - procent_bar # разница между максимальным процентом и долей значения в данной итерации
     print(f'{days[i]}: {procent_bar * "#"}{empty_char * "_"} ({str(subs[i]).rjust(2)})')
 
+
+from sklearn.feature_selection import mutual_info_regression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.inspection import permutation_importance
+import pandas as pd
+
+target = 'target'
+
+X = df.drop(columns=[target]).select_dtypes(include='number')
+y = df[target]
+
+# 1. Корреляция Spearman
+spearman = X.corrwith(y, method='spearman').abs().sort_values(ascending=False)
+
+# 2. Mutual Information
+mi = mutual_info_regression(X, y, random_state=42)
+mi = pd.Series(mi, index=X.columns).sort_values(ascending=False)
+
+# 3. Random Forest importance
+model = RandomForestRegressor(random_state=42)
+model.fit(X, y)
+
+perm = permutation_importance(
+    model,
+    X,
+    y,
+    n_repeats=10,
+    random_state=42
+)
+
+perm_importance = pd.Series(
+    perm.importances_mean,
+    index=X.columns
+).sort_values(ascending=False)
+
+# Итоговая таблица
+result = pd.DataFrame({
+    'spearman_corr_abs': spearman,
+    'mutual_info': mi,
+    'permutation_importance': perm_importance
+})
+
+print(result.sort_values('permutation_importance', ascending=False))
+
